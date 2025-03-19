@@ -1,0 +1,30 @@
+const express = require("express")
+const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
+const connectToMongoDb = require("./db")
+
+const UrlRouter = require("./routes/Url")
+
+
+
+const port = process.env.PORT || 8000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+connectToMongoDb();
+
+app.get("/",(req,res)=>{
+    res.send("Hello from the server side")
+})
+
+app.get("/health",(req,res)=>{
+    res.send("Server is healthy")
+})
+
+app.use("/url",UrlRouter)
+
+app.listen(port ,()=>{
+    console.log(`Server is running on port ${port}`);
+})
