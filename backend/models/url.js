@@ -10,6 +10,19 @@ const UrlSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    userId :{
+        type:String,
+        required:true,
+        unique:true
+    },
+    customUrl : {
+        type:String,
+        unique:true
+    },
+    qr:{
+        type:String,
+        unique:true
+    },
     visitHistory:[
         {
             Timestamp:{type:Number}
