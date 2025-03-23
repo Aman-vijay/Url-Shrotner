@@ -5,18 +5,20 @@ import Dashboard from "./pages/Dashboard"
 import Landing from "./pages/Landing"
 import Link from "./pages/Link"
 import Redirect from "./pages/Redirect"
+import Error from "./pages/Error"
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<AppLayout/>}>
-      <Route path="" element={<Landing/>}/>
+    <Route 
+      path="/" 
+      element={<AppLayout/>}
+      errorElement={<Error/>}
+    >
+      <Route index element={<Landing/>}/>
       <Route path="/dashboard" element={<Dashboard/>}/>
       <Route path="/auth" element={<Auth/>}/>
       <Route path="/link/:id" element={<Link/>}/>
       <Route path="/:id" element={<Redirect/>}/>
-
-
     </Route>
-
   )
 )
 function App() {

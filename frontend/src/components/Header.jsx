@@ -5,6 +5,7 @@ import { DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel, Dr
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut } from 'lucide-react'
 import { LinkIcon } from 'lucide-react'
+import logo from "../assets/logo.svg";
 
 
 const Header = () => {
@@ -12,11 +13,13 @@ const Header = () => {
     const user = true;
 
     return (
-        <header className="bg-gradient-to-r from-blue-600 to-blue-900 text-white shadow-md py-4 sticky top-0 z-50">
+        <header className=" bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md py-4 sticky top-0 z-50">
             <div className="container mx-auto px-4 flex items-center justify-between">
                 <div className="logo">
-                    <Link to="/" className="text-2xl text-white font-bold bg-gradient-to-r from-blue-400 to-indigo-300 text-transparent bg-clip-text hover:opacity-90 transition-all">URL Shortener</Link>
+                <Link to="/" className="text-2xl text-white font-bold bg-gradient-to-r from-blue-400 to-indigo-300  bg-clip-text hover:opacity-90 transition-all">
+                <img src={logo} alt="URL Shortener" className="h-14 " /></Link>
                 </div>
+
                 
                 {/* Mobile menu Button*/}
                 <Button

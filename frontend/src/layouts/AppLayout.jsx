@@ -11,7 +11,9 @@ const AppLayout = () => {
             <Outlet/>
 
         </main>
+       
         <Footer/>
+      
 
 
     </div>
