@@ -1,8 +1,15 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Button} from "@/components/ui/button"
+import { DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,} from './ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LogOut } from 'lucide-react'
+import { LinkIcon } from 'lucide-react'
+
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const user = true;
 
     return (
         <header className="bg-gradient-to-r from-blue-600 to-blue-900 text-white shadow-md py-4 sticky top-0 z-50">
@@ -11,8 +18,8 @@ const Header = () => {
                     <Link to="/" className="text-2xl text-white font-bold bg-gradient-to-r from-blue-400 to-indigo-300 text-transparent bg-clip-text hover:opacity-90 transition-all">URL Shortener</Link>
                 </div>
                 
-                {/* Mobile menu button */}
-                <button 
+                {/* Mobile menu Button*/}
+                <Button
                     className="md:hidden text-gray-300 focus:outline-none" 
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
@@ -23,7 +30,7 @@ const Header = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                         )}
                     </svg>
-                </button>
+                </Button>
                 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:block">
@@ -41,8 +48,30 @@ const Header = () => {
                 </nav>
                 
                 <div className="hidden md:flex space-x-4">
+                    {!user ?
+                    <div className="hidden md:flex space-x-4">
                     <Link to="/login" className="px-4 py-2 text-blue-400 font-medium hover:text-blue-300 transition-colors">Login</Link>
                     <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow transition-all">Sign Up</Link>
+                    </div>
+                    :(
+                        <DropdownMenu>
+  <DropdownMenuTrigger><Avatar>
+  <AvatarImage src="https://github.com/shadcn.png" />
+  <AvatarFallback>CN</AvatarFallback>
+</Avatar></DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuLabel>Aman Vj</DropdownMenuLabel>
+    <DropdownMenuSeparator />
+
+    <DropdownMenuItem> <LinkIcon className='ml-2 w-4 h-2'/>Link</DropdownMenuItem>
+    <DropdownMenuItem className="text-red-400 ">
+    <LogOut className='ml-2 w-4 h-4'/>
+        Logout </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
+                    )
+}
                 </div>
             </div>
             
