@@ -33,7 +33,7 @@ app.get("/health",(req,res)=>{
 })
 
 app.use("/url",UrlRouter)
-app.use("/user",userRouter)
+app.use("/auth",userRouter)
 
 app.listen(port ,()=>{
     console.log(`Server is running on port ${port}`);
