@@ -10,7 +10,7 @@ import logo from "../assets/url-logo.svg";
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const user = true;
+    const user = false;
 
     return (
         <header className=" bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md py-4 sticky top-0 z-50">
@@ -53,8 +53,8 @@ const Header = () => {
                 <div className="hidden md:flex space-x-4">
                     {!user ?
                     <div className="hidden md:flex space-x-4">
-                    <Link to="/login" className="px-4 py-2 text-blue-400 font-medium hover:text-blue-300 transition-colors">Login</Link>
-                    <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow transition-all">Sign Up</Link>
+                    <Link to="/auth" className="px-4 py-2 text-white font-medium hover:text-blue-300 transition-colors">Login</Link>
+                    <Link to="/auth" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium shadow-sm hover:shadow transition-all">Sign Up</Link>
                     </div>
                     :(
                         <DropdownMenu>
@@ -86,8 +86,8 @@ const Header = () => {
                         <li><Link to="/create" className="block text-gray-300 py-2 hover:text-blue-400 font-medium" onClick={() => setIsMenuOpen(false)}>Shorten URL</Link></li>
                         <li><Link to="/dashboard" className="block text-gray-300 py-2 hover:text-blue-400 font-medium" onClick={() => setIsMenuOpen(false)}>Dashboard</Link></li>
                         <li className="border-t border-gray-700 pt-3 mt-3 flex space-x-3">
-                            <Link to="/login" className="block w-1/2 text-center py-2 text-blue-400 border border-blue-500 rounded-lg font-medium" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                            <Link to="/signup" className="block w-1/2 text-center py-2 bg-blue-600 text-white rounded-lg font-medium" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+                            <Link to="/auth" className="block w-1/2 text-center py-2 text-blue-400 border border-blue-500 rounded-lg font-medium" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                            <Link to="/auth" className="block w-1/2 text-center py-2 bg-blue-600 text-white rounded-lg font-medium" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
                         </li>
                     </ul>
                 </div>
