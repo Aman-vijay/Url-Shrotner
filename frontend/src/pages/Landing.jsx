@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRightIcon, LinkIcon, CopyIcon, CheckIcon } from 'lucide-react';
+import {useNavigate} from "react-router-dom"
 
 const faqItems = [
   {
@@ -59,6 +60,7 @@ const Landing = () => {
   const [url, setUrl] = useState('');
   const [shortened, setShortened] = useState('');
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -66,8 +68,10 @@ const Landing = () => {
 
   const handleShorten = (e) => {
     e.preventDefault();
+
+    navigate(`/auth?createNew=${url}`)
     
-    setShortened('https://shrtn.er/abc123');
+    // setShortened('https://shrtn.er/abc123');
   };
 
   const copyToClipboard = () => {
