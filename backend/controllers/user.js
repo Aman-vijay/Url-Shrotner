@@ -41,16 +41,19 @@ const CreateUser = async (req, res) => {
 const LoginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ message: "Parameter missing" });
+        if (!email ) {
+            return res.status(401).json({ message: "Email missing" });
+        }
+        if ( !password) {
+            return res.status(401).json({ message: "Password missing" });
         }
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(401).json({ message: "User not found" });
         }
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(401).json({ message: "Invalid credentials" });
         }
         const { password: _, ...userData } = user._doc;
         return res.status(200).json({
