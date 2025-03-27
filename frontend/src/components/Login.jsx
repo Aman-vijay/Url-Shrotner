@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { BeatLoader } from 'react-spinners';
-
+import { useAuth } from "@/context/AuthContext";
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -28,6 +28,7 @@ export const Login = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -39,7 +40,6 @@ export const Login = () => {
       ...prevState,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -59,7 +59,7 @@ export const Login = () => {
       
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Login failed');
-      
+        login(data.user);      
         localStorage.setItem('token', data.token);
         if (rememberMe) localStorage.setItem('rememberedEmail', formData.email);
         else localStorage.removeItem('rememberedEmail');
