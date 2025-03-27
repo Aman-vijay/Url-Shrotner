@@ -5,19 +5,24 @@ const { generateToken } = require("../utils/jwt");
 const CreateUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        if (!username || !email || !password) {
-            return res.status(400).json({ message: "Parameter missing" });
+        if (!username) {
+            return res.status(401).json({ message: "Username missing" });
+        }
+        if (!email ) {
+            return res.status(401).json({ message: "Email missing" });
+        }
+        if ( !password) {
+            return res.status(401).json({ message: "Password missing" });
         }
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {
             return res.status(400).json({ message: "User already exists, redirect to login" });
         }
         const passwordLength = password.length;
-        if (passwordLength < 8) {
-            return res.status(400).json({ message: "Password must be at least 8 characters" });
+        if (passwordLength < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters" });
         }
-        const existingUsername = await  User.findOne
-({ username });
+        const existingUsername = await  User.findOne({ username });
         if (existingUsername) {
             return res.status(400).json({ message: "Username already taken" });
         }
