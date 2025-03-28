@@ -6,15 +6,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, LinkIcon } from "lucide-react";
 import logo from "../assets/url-logo.svg";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";  // Import Auth Context
+import { useAuth } from "@/context/AuthContext";  
 
 const Header = () => {
     const navigate = useNavigate();
-    const { user, logout } = useAuth(); // Use context for authentication state
+    const { user, logout } = useAuth(); 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
-        logout(); // Call logout function from AuthContext
+        logout();
         navigate("/auth");
     };
 
@@ -64,7 +64,10 @@ const Header = () => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem>
                                     <LinkIcon className="mr-2 w-4 h-4" />
+                                    <Link to="/dashboard" className=" ">
+
                                     My Links
+                                    </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="text-red-400" onClick={handleLogout}>
                                     <LogOut className="mr-2 w-4 h-4" />
