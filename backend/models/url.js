@@ -10,7 +10,7 @@ const AnalyticsSchema = new mongoose.Schema({
         {
             Timestamp:{
                 type:Number,
-                default:Date.now(),
+                default: () => Date.now(),
 
             },
             ip:{
@@ -48,18 +48,21 @@ const UrlSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    userId :{
-        type:String,
-        required:true,
-        unique:true
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
     },
+    
     customUrl : {
         type:String,
-        unique:true
+        unique:true,
+        sparse:true,
     },
     qr:{
         type:String,
-        unique:true
+        unique:true,
+        sparse: true
     }
 },{timestamps:true})
 

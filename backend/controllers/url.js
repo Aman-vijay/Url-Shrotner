@@ -81,7 +81,7 @@ async function redirectIdtoUrl(req, res) {
 
         const entry = await URL.findOne({ shortUrl: shortId });
         if (!entry) {
-            return res.status(404).json({ error: "Short URL not found" });
+            return res.status(404).json({ error: "Short URL not found2" });
         }
         const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
         let { city, country } = getGeoData(ip);
@@ -133,7 +133,7 @@ async function showAnalytics(req, res) {
 
         const entry = await URL.findOne({ shortUrl: shortId });
         if (!entry) {
-            return res.status(404).json({ error: "Short URL not found" });
+            return res.status(404).json({ error: "Short URL not found1" });
         }
 
         const analyticsData = await Analytics.findOne({ urlId: entry._id });
@@ -165,4 +165,28 @@ async function showAnalytics(req, res) {
     }
 }
 
-module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics};
+//Get url created by user
+const getUrlsByUser = async (req, res) => {
+    const userId = req.userId;
+    
+    if (!userId) {
+        return res.status(400).json({ error: "userId is required" });
+    }
+
+    try {
+   
+        const urls = await URL.find({ userId: userId }).sort({ createdAt: -1 });
+        
+        if (!urls || urls.length === 0) {
+            return res.status(404).json({ message: "No URLs found for this user" });
+        }
+        
+        return res.json(urls);
+    }
+    catch(err) {
+
+        return res.status(500).json({ error: "Something went wrong while fetching URLs" });
+    }
+}
+
+module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser};
