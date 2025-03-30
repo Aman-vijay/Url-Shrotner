@@ -8,15 +8,55 @@ import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 import { Filter } from 'lucide-react'
 import Error from './Error'
+import { useEffect } from 'react'
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user'))
   const [searchLink,setSearchLink] = useState("")
+  const [links,setLinks]= useState([]);
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const getLinks = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetch(`${backendUrl}/url/geturls`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!result.ok) {
+        throw new Error('Failed to fetch links');
+      }
+
+      
+      const res = await result.json();
+      setLinks(res);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching links:', err);
+      setError(err.message || 'Failed to load links');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if(token){
+  
+      getLinks();}
+  }, []);
 
 
 
   return (
     <div>
-      {true && <BarLoader width={"100%"} color="#36d7b7" />}
+      {loading && <BarLoader width={"100%"} color="#36d7b7" />}
       <div className='flex flex-col gap-4'>
         <Card className='w-full'>
           <CardContent className='flex flex-col  items-center gap-2'>
@@ -57,6 +97,14 @@ const Dashboard = () => {
            />
            <Filter className='absolute top-2 right-2 p-1'/>
         </div>
+
+        {links && links.map((link) => (
+          <li key={link._id}>
+            <a href={link.redirectUrl} target="_blank" rel="noopener noreferrer">
+              {link.shortUrl}
+            </a>
+          </li>
+        ))}
         {/* <Error message={error.message}/>; */}
         
         </div>
