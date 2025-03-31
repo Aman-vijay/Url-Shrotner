@@ -39,6 +39,11 @@ const AnalyticsSchema = new mongoose.Schema({
 },{timestamps:true})
 
 const UrlSchema = new mongoose.Schema({
+    title: {
+        type:String,
+        required:true
+    },
+    
     shortUrl : {
         type:String,
         required:true,

@@ -55,6 +55,7 @@ async function GenerateNewUrl(req, res) {
        const newUrl= await URL.create({
             userId,
             shortUrl: shortId,
+            title: body.title?.trim() || "Default Title",
             redirectUrl,
             customUrl: body.customUrl?.trim(),
             qr: body.qr,
