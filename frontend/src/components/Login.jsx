@@ -19,10 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import useFetch from '@/hooks/useFetch';
 import {useSearchParams} from "react-router-dom";
-
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
+import { BackendUrl } from '@/utils/Urls';
 export const Login = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -51,7 +48,7 @@ export const Login = () => {
    
 
     const handleSubmit = async () => {
-        const response = await fetch(`${backendUrl}/auth/login`, {
+        const response = await fetch(`${BackendUrl}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...formData, rememberMe }),

@@ -13,9 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import useFetch from '@/hooks/useFetch'
 import { useSearchParams } from 'react-router-dom'
 import { User } from "lucide-react";
-
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { BackendUrl } from '@/utils/Urls'
 
 
 
@@ -48,7 +46,7 @@ const Signup = () => {
   }
 
   const handleSubmit = async () => {
-    const response = await fetch(`${backendUrl}/auth/register`, {
+    const response = await fetch(`${BackendUrl}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({...formData}),
