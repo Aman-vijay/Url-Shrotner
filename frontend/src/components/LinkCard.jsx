@@ -2,6 +2,8 @@
 import {Link} from "react-router-dom"
 import { Button } from "./ui/button";
 import { Copy,Trash,Download } from "lucide-react";
+import { BackendUrl } from '@/utils/Urls';
+import CustomAlert from "./CustomAlert"; 
 
 const customTitle=(title)=>{
     let hostname = new URL(title).hostname;
@@ -18,8 +20,18 @@ const customTitle=(title)=>{
 
 
   
-const LinkCard = ({url,frontendUrl,showToast})=>{
+const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
 
+  const handleDelete = async (urlId) => {
+    try {
+      await deleteUrl({ backendUrl: BackendUrl, token: localStorage.getItem("token"), urlId });
+      showToast("URL deleted successfully!", "success");
+      fetchData();
+    } catch (error) {
+      showToast("Failed to delete URL", "error");
+    }
+  };
+  
   const copyToClipboard = (text) => {  
     navigator.clipboard.writeText(text);  
     showToast("Link copied to clipboard!","success");
@@ -64,6 +76,8 @@ const LinkCard = ({url,frontendUrl,showToast})=>{
             <p className="flex items-end flex-1 text-gray-500 text-xs bottom-0">Created: {new Date(url?.createdAt).toLocaleDateString()}</p>
     
             </Link>
+            <div className="flex gap-2 mt-2 sm:mt-0 cursor-pointer">
+        
 
             <div className="flex gap-2 mt-2 sm:mt-0 cursor-pointer">
                     <Button
@@ -83,12 +97,17 @@ const LinkCard = ({url,frontendUrl,showToast})=>{
                      className="flex items-center gap-1 hover:bg-black">
                         <Download size={16}/> 
                     </Button>
-                      <Button 
-                      variant="destructive"
-                      size="sm"
-                      className="flex items-center gap-1 hover:bg-red-500" >
-                        <Trash size={16}/> 
-                      </Button>
+                    <CustomAlert
+  message="Are you sure you want to delete this link? This action cannot be undone."
+  confirmText="Yes, Delete"
+  cancelText="Cancel"
+  onConfirm={() => handleDelete(url?._id)} // ✅ Fix: Pass function reference
+  onCancel={() => showToast("Cancelled deletion", "error")}
+  triggerText={<Trash size={16} />} 
+  variant="destructive" 
+/>
+
+      </div>
                    
 
                     </div>

@@ -190,4 +190,36 @@ const getUrlsByUser = async (req, res) => {
     }
 }
 
-module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser};
+//Delete URL by user
+const deleteUrlByUser = async (req, res) => {
+    const userId = req.userId;
+    const urlId = req.params.urlId;
+    
+    if (!userId) {
+        return res.status(400).json({ error: "userId is required" });
+    }
+
+    try {
+        const url = await URL.findOneAndDelete({ _id: urlId, userId: userId });
+        
+        if (!url) {
+            return res.status(404).json({ message: "URL not found or not authorized to delete" });
+        }
+        
+       
+        try {
+            await Analytics.findOneAndDelete({ urlId: urlId });
+        } catch (analyticsErr) {
+            console.log("No analytics found or error deleting analytics:", analyticsErr);
+        }
+        
+       
+        
+        return res.json({ message: "URL deleted successfully" });
+    }
+    catch(err) {
+        return res.status(500).json({ error: "Something went wrong while deleting URL" });
+    }
+}
+
+module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser,deleteUrlByUser};
