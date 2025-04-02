@@ -8,9 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LinkCard from '@/components/LinkCard';
 import Error from './Error';
-import { toast } from "react-hot-toast";  
 import { FrontendUrl,BackendUrl } from '@/utils/Urls';
-
+import { toast,Toaster } from "react-hot-toast"; 
 
 const getLinks = async ({ backendUrl, token }) => {
   const result = await fetch(`${backendUrl}/url/geturls`, {
@@ -47,8 +46,15 @@ const Dashboard = () => {
     url.shortUrl.toLowerCase().includes(searchLink.toLowerCase()) ||
     url.redirectUrl.toLowerCase().includes(searchLink.toLowerCase())
   );
-
- 
+  
+  const showToast = (message, type = "success") => {
+    if (type === "success") {
+      toast.success(message, { position: "bottom-left" });
+    } else {
+      toast.error(message, { position: "bottom-left" });
+    }
+  };
+  
 
   if (loading) {
     return <BarLoader width={"100%"} color="#36d7b7" />;
@@ -57,6 +63,7 @@ const Dashboard = () => {
   return (
     <div>
       <div className='flex flex-col gap-4'>
+     
         <Card className='w-full'>
           <CardContent className='flex flex-col items-center gap-2'>
             <CardTitle className='text-2xl font-bold'>Dashboard</CardTitle>
@@ -97,47 +104,16 @@ const Dashboard = () => {
           {filteredUrls?.length === 0 ? (
             <p className="text-gray-400 text-center">No links found.</p>
           ) : (
-            // <ul className="list-none space-y-4">
-            //   {filteredUrls?.map((link) => (
-            //     <li key={link._id} className="bg-gray-900 p-3 rounded-md flex flex-col sm:flex-row sm:items-center justify-between">
-            //       <div className="flex flex-col">
-            //         <div className='font-bold'>{link.title || "Default Title"}</div>
-            //         <a
-            //           href={link.redirectUrl}
-            //           target="_blank"
-            //           rel="noopener noreferrer"
-            //           className="text-blue-400 font-semibold hover:underline"
-            //         >
-            //           {link.shortUrl}
-            //         </a>
-            //         <p className="text-gray-400 text-sm truncate w-[90%]">{link.redirectUrl}</p>
-            //         <p className="text-gray-500 text-xs">Created: {new Date(link.createdAt).toLocaleDateString()}</p>
-            //       </div>
-            //       <div className="flex gap-2 mt-2 sm:mt-0">
-            //         <Button
-            //           variant="outline"
-            //           size="sm"
-            //           onClick={() => copyToClipboard(`${window.location.origin}/${link.shortUrl}`)}
-            //           className="flex items-center gap-1"
-            //         >
-            //           <Copy size={16} /> Copy
-            //         </Button>
-            //         <Button variant="destructive" size="sm" className="flex items-center gap-1">
-            //           <Trash size={16} /> Delete
-            //         </Button>
-            //       </div>
-            //     </li>
-            //   ))}
-            // </ul>
             <ul className="list-none space-y-4">
            {filteredUrls?.map((url,i)=>{
-            return <LinkCard key={i} url={url} frontendUrl={FrontendUrl} fetchUrl={fetchData}/>
+            return <LinkCard key={i} url={url} frontendUrl={FrontendUrl}   showToast={showToast}/>
            })}
            </ul>
           )}
         </div>
 
         {error && <Error message={error.message || error} />}
+        <Toaster position="top-left" reverseOrder={false}/>
       </div>
     </div>
   );
