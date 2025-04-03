@@ -43,7 +43,7 @@ export const Login = () => {
   };
 
     const [searchParams] = useSearchParams();
-    const longLink = searchParams.get('createNew') ;
+    const redirectUrl = searchParams.get('createNew') ;
    
    
 
@@ -69,7 +69,8 @@ export const Login = () => {
 
     useEffect(() => {
         if(error=== null && data){
-            navigate(`/dashboard?${longLink?`createNew=${longLink}`:''}`);
+          navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
+
         }
     }, [error, data, navigate])
    

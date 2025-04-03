@@ -65,11 +65,12 @@ const Signup = () => {
 
 
   const [searchParams] = useSearchParams()
-  const longLink = searchParams.get('createNew') ;
+  const redirectUrl = searchParams.get('createNew') ;
 
     useEffect(() => {
           if(error=== null && data){
-              navigate(`/dashboard?${longLink?`createNew=${longLink}`:''}`);
+            navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
+
           }
       }, [error, data, navigate])
 const handleSignup = async (e) => {

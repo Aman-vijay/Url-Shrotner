@@ -7,6 +7,8 @@ import { Filter } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LinkCard from '@/components/LinkCard';
+import {useSearchParams} from "react-router-dom"
+import CreateLink from '@/components/CreateLink';
 import Error from './Error';
 import { FrontendUrl, BackendUrl } from '@/utils/Urls';
 import { toast, Toaster } from "react-hot-toast"; 
@@ -47,6 +49,9 @@ const deleteUrl = async ({ backendUrl, token, urlId }) => {
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [searchLink, setSearchLink] = useState("");
+    const [searchParams] = useSearchParams();
+    const redirectUrl = searchParams.get('?createNew') ;
+  console.log("REDIRECT-URL Dashboard",redirectUrl)
 
   const { data: links, loading, error, fetchData } = useFetch(getLinks, {
     backendUrl: BackendUrl,
@@ -103,11 +108,9 @@ const Dashboard = () => {
         </div>
         <div className='flex justify-between p-2'>
           <h1 className='text-3xl font-extrabold'>My Links</h1>
-          <Link to="/">
-            <Button className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded'>
-              Create New Link
-            </Button>
-          </Link>
+       
+           <CreateLink redirectUrl={redirectUrl}/>
+         
         </div>
         <div className='relative mr-4'>
           <Input
