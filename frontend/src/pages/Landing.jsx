@@ -70,6 +70,7 @@ const Landing = () => {
     e.preventDefault();
 
     navigate(`/auth?createNew=${url}`)
+    localStorage.setItem("redirectUrl",url);
     
     // setShortened('https://shrtn.er/abc123');
   };

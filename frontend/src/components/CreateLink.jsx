@@ -13,12 +13,15 @@ import { Card } from "./ui/card";
 import ErrorMessage from "./ErrorMessage";
 import { useState } from "react";
 import * as yup from "yup";
+import { useEffect } from "react";
 
-const CreateLink = ({ redirectUrl }) => {
+const CreateLink = () => {
+  
+  const redirectUrl = localStorage.getItem("redirectUrl")
   let [searchParams, setSearchParams] = useSearchParams();
   
   // Fallback to searchParams if prop is not provided
-  const resolvedRedirectUrl = redirectUrl || searchParams.get("createNew") || "";
+  const resolvedRedirectUrl =  searchParams.get("createNew") || redirectUrl || "" ;
   console.log("resolvedUrl:",resolvedRedirectUrl)
 
   const [error, setError] = useState({});
@@ -47,7 +50,8 @@ const CreateLink = ({ redirectUrl }) => {
       onOpenChange={(res) => {
         if (!res) {
           let newParams = new URLSearchParams(searchParams);
-          newParams.delete("createNew"); // Remove only createNew, keep others
+          newParams.delete("createNew");
+          localStorage.removeItem("redirectUrl") 
           setSearchParams(newParams);
         }
       }}

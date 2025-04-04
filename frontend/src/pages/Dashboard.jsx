@@ -49,9 +49,8 @@ const deleteUrl = async ({ backendUrl, token, urlId }) => {
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [searchLink, setSearchLink] = useState("");
-    const [searchParams] = useSearchParams();
-    const redirectUrl = searchParams.get('?createNew') ;
-  console.log("REDIRECT-URL Dashboard",redirectUrl)
+    // const [searchParams] = useSearchParams();
+  
 
   const { data: links, loading, error, fetchData } = useFetch(getLinks, {
     backendUrl: BackendUrl,
@@ -109,7 +108,7 @@ const Dashboard = () => {
         <div className='flex justify-between p-2'>
           <h1 className='text-3xl font-extrabold'>My Links</h1>
        
-           <CreateLink redirectUrl={redirectUrl}/>
+           <CreateLink />
          
         </div>
         <div className='relative mr-4'>
