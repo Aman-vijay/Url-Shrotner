@@ -3,7 +3,7 @@ const router = express.Router()
 const {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser,deleteUrlByUser} = require("../controllers/url")
 const {verifyTokenMiddleware} = require("../utils/jwt")
 
-router.post("/",verifyTokenMiddleware, GenerateNewUrl);
+router.post("/api/createNewUrl",verifyTokenMiddleware, GenerateNewUrl);
 
 router.get("/:shortId", redirectIdtoUrl);
 

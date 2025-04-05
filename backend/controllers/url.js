@@ -19,9 +19,9 @@ async function GenerateNewUrl(req, res) {
         if(!userId) return res.status(400).json({ error: "userId is required" });
         
         // Check if body exists and contains URL
-        if(!body || !body.url) return res.status(400).json({ error: "URL is required" });
+        if(!body || !body.redirectUrl) return res.status(400).json({ error: "URL is required" });
+        const redirectUrl = body.redirectUrl.trim();
         
-        const redirectUrl = body.url.trim();
         
         // // Validate URL format
         // try {
