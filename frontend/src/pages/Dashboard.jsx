@@ -108,7 +108,8 @@ const Dashboard = () => {
         <div className='flex justify-between p-2'>
           <h1 className='text-3xl font-extrabold'>My Links</h1>
        
-           <CreateLink />
+          <CreateLink onSuccess={fetchData} />
+
          
         </div>
         <div className='relative mr-4'>
