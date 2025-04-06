@@ -14,7 +14,7 @@ import { FrontendUrl, BackendUrl } from '@/utils/Urls';
 import { toast, Toaster } from "react-hot-toast"; 
 
 const getLinks = async ({ backendUrl, token }) => {
-  const result = await fetch(`${backendUrl}/url/api/geturls`, {
+  const result = await fetch(`${backendUrl}/api/geturls`, {
     method: "GET",
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -33,7 +33,7 @@ const getLinks = async ({ backendUrl, token }) => {
 };
 
 const deleteUrl = async ({ backendUrl, token, urlId }) => {
-  const res = await fetch(`${backendUrl}/url/api/deleteUrl/${urlId}`, {
+  const res = await fetch(`${backendUrl}/api/deleteUrl/${urlId}`, {
     method: "DELETE",
     headers: {
       'Authorization': `Bearer ${token}`,

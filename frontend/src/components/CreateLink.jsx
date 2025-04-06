@@ -72,7 +72,7 @@ const CreateLink = ({ onSuccess }) => {
   
       const payload = { ...formData, qr: qrDataUrl };
   
-      const res = await fetch(`${BackendUrl}/url/api/createNewUrl`, {
+      const res = await fetch(`${BackendUrl}/api/createNewUrl`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

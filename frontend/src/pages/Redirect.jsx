@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { BackendUrl } from '@/utils/Urls';
 
 const Redirect = () => {
-  return (
-    <div>Redirect</div>
-  )
-}
+  const { id } = useParams(); // Gmail
 
-export default Redirect
+  useEffect(() => {
+    window.location.href = `${BackendUrl}/${id}`;
+  }, [id]);
+
+  return <div>Redirecting you to the original site...</div>;
+};
+
+export default Redirect;

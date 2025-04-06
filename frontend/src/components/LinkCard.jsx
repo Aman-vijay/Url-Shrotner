@@ -5,6 +5,7 @@ import { Copy,Trash,Download } from "lucide-react";
 import { BackendUrl } from '@/utils/Urls';
 import CustomAlert from "./CustomAlert"; 
 
+
 const customTitle=(title)=>{
     let hostname = new URL(title).hostname;
 
@@ -68,9 +69,9 @@ const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
         <div className="flex flex-col md:flex-row gap-5 shadow-lg rounded-md bg-gray-900 p-4 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-700">
         
             <img src={url?.qr} className="h-32 object-contain ring-blue-500 self-start" alt="qr-code"/>
-            <Link to={`/link/${url?._id}`} className="flex flex-col flex-1">
+            <Link to={`${BackendUrl}/${url?.shortUrl}`} className="flex flex-col flex-1">
             <span className='font-extrabold text-2xl cursor-pointer hover:underline'>{url?.title || customTitle(url?.redirectUrl) }</span>
-             <span className='font-extrabold text-xl cursor-pointer hover:underline text-blue-400'> {frontendUrl}{url?.customUrl ? url.customUrl :url.shortUrl}</span>
+             <span className='font-extrabold text-xl cursor-pointer hover:underline text-blue-400'> {BackendUrl}/{url?.customUrl ? url.customUrl :url.shortUrl}</span>
             <span className=' flex items-center gap-1 hover:underline cursor-pointer truncate w-[90%]'>  {url?.redirectUrl}</span>
            
             <p className="flex items-end flex-1 text-gray-500 text-xs bottom-0">Created: {new Date(url?.createdAt).toLocaleDateString()}</p>
@@ -83,7 +84,7 @@ const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => copyToClipboard(`${window.location.origin}/${url?.shortUrl}`)}
+                      onClick={() => copyToClipboard(`${BackendUrl}/${url?.shortUrl}`)}
                       className="flex items-center gap-1"
                     >
                       <Copy size={16} /> 
