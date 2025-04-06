@@ -4,8 +4,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 const connectToMongoDb = require("./db")
 
-const UrlRouter = require("./routes/Url")
+const UrlRouter = require("./routes/url")
 const userRouter = require("./routes/user")
+const { redirectIdtoUrl } = require("./controllers/url");
 const cors = require('cors')
 
 
@@ -27,12 +28,10 @@ connectToMongoDb();
 app.get("/",(req,res)=>{
     res.send("Hello from the server side")
 })
+app.get("/:shortId", redirectIdtoUrl);
 
-app.get("/health",(req,res)=>{
-    res.send("Server is healthy")
-})
 
-app.use("/url",UrlRouter)
+app.use("/api",UrlRouter)
 app.use("/auth",userRouter)
 
 app.listen(port ,()=>{
