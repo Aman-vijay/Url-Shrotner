@@ -40,37 +40,42 @@ const AnalyticsSchema = new mongoose.Schema({
 
 const UrlSchema = new mongoose.Schema({
     title: {
-        type:String,
-        required:true
+      type: String,
+      required: true
     },
-    
-    shortUrl : {
-        type:String,
-        required:true,
-        unique:true    
+    shortUrl: {
+      type: String,
+      required: true,
+      unique: true 
     },
-    redirectUrl : {
-        type:String,
-        required:true
+    redirectUrl: {
+      type: String,
+      required: true
+     
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     },
-    
-    customUrl : {
-        type:String,
-        unique:true,
-        sparse:true,
+    customUrl: {
+      type: String,
+      sparse: true,
+      default: undefined
     },
-    qr:{
-        type:String,
-        unique:true,
-        sparse: true
+    qr: {
+      type: String,
+      sparse: true,
+      default: undefined
     }
-},{timestamps:true})
+  }, { timestamps: true });
+  
+  // ✅ Unique per user
+  UrlSchema.index({ userId: 1, customUrl: 1 }, { unique: true, sparse: true });
+  UrlSchema.index({ userId: 1, qr: 1 }, { unique: true, sparse: true });
+  
 
+  
 const URL = mongoose.model("url",UrlSchema)
 const Analytics = mongoose.model("analytics",AnalyticsSchema)
 

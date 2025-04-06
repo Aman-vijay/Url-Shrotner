@@ -1,6 +1,8 @@
 const {nanoid} = require("nanoid");
 const {URL,Analytics} = require("../models/url")
+
 const geoip = require("geoip-lite")
+
 
 async function getGeoData(ip) {
     const geo = geoip.lookup(ip);
@@ -13,66 +15,73 @@ async function getGeoData(ip) {
 
 async function GenerateNewUrl(req, res) {
     try {
-        const { body, userId } = req;
-        
-        // Check if userId exists
-        if(!userId) return res.status(400).json({ error: "userId is required" });
-        
-        // Check if body exists and contains URL
-        if(!body || !body.redirectUrl) return res.status(400).json({ error: "URL is required" });
-        const redirectUrl = body.redirectUrl.trim();
-        
-        
-        // // Validate URL format
-        // try {
-        //     new URL(redirectUrl);
-        // } catch (error) { 
-        //     return res.status(400).json({ error: "Invalid URL format" });
-        // }
-        
-        // Check if URL already exists for this user
-        const existingURL = await URL.findOne({ 
-            redirectUrl: redirectUrl,
-            userId: userId
+      const { body, userId } = req;
+  
+      if (!userId) return res.status(400).json({ error: "Missing user ID" });
+      if (!body || !body.redirectUrl) return res.status(400).json({ error: "Long URL is required" });
+  
+      const redirectUrl = body.redirectUrl.trim();
+      const trimmedCustomUrl = body.customUrl?.trim();
+      const shortId = trimmedCustomUrl || nanoid(8);
+  
+      // If redirect URL already exists for this user, return the existing short URL
+      const existingURL = await URL.findOne({
+        redirectUrl: redirectUrl,
+        userId: userId,
+      });
+  
+      if (existingURL) {
+        return res.status(409).json({ error: "URL already exists", id: existingURL.shortUrl });
+      }
+  
+      // If custom URL is provided, check if it's taken (by same user)
+      if (trimmedCustomUrl) {
+        const customUrlTaken = await URL.findOne({
+          userId: userId,
+          customUrl: trimmedCustomUrl,
         });
-        
-        if (existingURL) {
-            return res.json({ id: existingURL.shortUrl });
+        if (customUrlTaken) {
+          return res.status(409).json({ error: "Custom URL already in use" });
         }
-        
-        // Generate a shortId or use customUrl if provided
-        const shortId = body.customUrl?.trim() || nanoid(8);
-        
-        // Check if the custom URL is already taken
-        if (body.customUrl) {
-            const customUrlExists = await URL.findOne({ shortUrl: shortId });
-            if (customUrlExists) {
-                return res.status(409).json({ error: "Custom URL already in use" });
-            }
-        }
-        
-        // Create new URL record
-       const newUrl= await URL.create({
-            userId,
-            shortUrl: shortId,
-            title: body.title?.trim() || "Default Title",
-            redirectUrl,
-            customUrl: body.customUrl?.trim(),
-            qr: body.qr,
-        });
-
-        // Create analytics record
-        await Analytics.create({
-            urlId:newUrl._id,
-        })
-
-        return res.status(201).json({ id: shortId });
+      }
+  
+      // Check if shortUrl (including custom one) is globally unique
+      const shortUrlTaken = await URL.findOne({ shortUrl: shortId });
+      if (shortUrlTaken) {
+        return res.status(409).json({ error: "Short URL already exists" });
+      }
+  
+      // Create new URL document
+      const newUrl = await URL.create({
+        userId,
+        shortUrl: shortId,
+        title: body.title?.trim() || "Default Title",
+        redirectUrl,
+        customUrl: trimmedCustomUrl || undefined,
+        qr: body.qr,
+      });
+  
+      // Create initial analytics record
+      await Analytics.create({ urlId: newUrl._id });
+  
+      return res.status(201).json({ id: shortId });
     } catch (err) {
-        console.error("URL generation error:", err);
-        return res.status(500).json({ error: "Something went wrong" });
+      console.error("URL generation error:", err);
+  
+      // Duplicate key error (MongoDB index constraint)
+      if (err.code === 11000) {
+        if (err.keyPattern?.customUrl) {
+          return res.status(409).json({ error: "Custom URL already in use" });
+        }
+        if (err.keyPattern?.qr) {
+          return res.status(409).json({ error: "QR already in use" });
+        }
+      }
+  
+      return res.status(500).json({ error: "Server error. Try again later." });
     }
-}
-
+  }
+  
 async function redirectIdtoUrl(req, res) {
     try {
         const shortId = req.params.shortId;
