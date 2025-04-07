@@ -21,7 +21,7 @@ const customTitle=(title)=>{
 
 
   
-const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
+const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
 
   const handleDelete = async (urlId) => {
     try {
@@ -29,7 +29,7 @@ const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
       showToast("URL deleted successfully!", "success");
       fetchData();
     } catch (error) {
-      showToast("Failed to delete URL", "error");
+      showToast("Failed to delete URL", error);
     }
   };
   
@@ -69,7 +69,7 @@ const LinkCard = ({url,frontendUrl,showToast,deleteUrl,fetchData})=>{
         <div className="flex flex-col md:flex-row gap-5 shadow-lg rounded-md bg-gray-900 p-4 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-700">
         
             <img src={url?.qr} className="h-32 object-contain ring-blue-500 self-start" alt="qr-code"/>
-            <Link to={`${BackendUrl}/${url?.shortUrl}`} className="flex flex-col flex-1">
+            <Link to={`/link/${url?.shortUrl}`} className="flex flex-col flex-1">
             <span className='font-extrabold text-2xl cursor-pointer hover:underline'>{url?.title || customTitle(url?.redirectUrl) }</span>
              <span className='font-extrabold text-xl cursor-pointer hover:underline text-blue-400'> {BackendUrl}/{url?.customUrl ? url.customUrl :url.shortUrl}</span>
             <span className=' flex items-center gap-1 hover:underline cursor-pointer truncate w-[90%]'>  {url?.redirectUrl}</span>
