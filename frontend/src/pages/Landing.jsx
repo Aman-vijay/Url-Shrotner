@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRightIcon, LinkIcon, CopyIcon, CheckIcon } from 'lucide-react';
 import {useNavigate} from "react-router-dom"
+import { useAuth } from "@/context/AuthContext";  
+
 
 const faqItems = [
   {
@@ -61,6 +63,8 @@ const Landing = () => {
   const [shortened, setShortened] = useState('');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+  
+const {user} = useAuth();
 
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -189,6 +193,7 @@ const Landing = () => {
         </div>
 
         {/* CTA Section */}
+        {!user && (
         <div className="py-16 text-center">
           <div className="max-w-3xl mx-auto bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 shadow-lg">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to shorten your URLs?</h2>
@@ -199,7 +204,10 @@ const Landing = () => {
             </div>
           </div>
         </div>
+        )
+      }
       </div>
+        
 
      
     </div>
