@@ -45,7 +45,7 @@ const Header = () => {
                 <nav className="hidden md:block">
                     <ul className="flex space-x-8">
                         <li><Link to="/" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">Home</Link></li>
-                        <li><Link to="/create" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">Shorten URL</Link></li>
+                       
                         <li><Link to="/dashboard" className="text-gray-300 hover:text-blue-400 font-medium transition-colors">Dashboard</Link></li>
                     </ul>
                 </nav>
@@ -88,7 +88,7 @@ const Header = () => {
                 <div className="md:hidden bg-gray-800 shadow-lg mt-4 py-3 px-4 absolute left-0 right-0 z-20">
                     <ul className="space-y-3">
                         <li><Link to="/" className="block text-gray-300 py-2 hover:text-blue-400 font-medium" onClick={() => setIsMenuOpen(false)}>Home</Link></li>
-                        <li><Link to="/create" className="block text-gray-300 py-2 hover:text-blue-400 font-medium" onClick={() => setIsMenuOpen(false)}>Shorten URL</Link></li>
+    
                         <li><Link to="/dashboard" className="block text-gray-300 py-2 hover:text-blue-400 font-medium" onClick={() => setIsMenuOpen(false)}>Dashboard</Link></li>
                         <li className="border-t border-gray-700 pt-3 mt-3 flex">
                             {user ? (
