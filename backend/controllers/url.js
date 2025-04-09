@@ -199,6 +199,41 @@ const getUrlsByUser = async (req, res) => {
     }
 }
 
+
+const getUrlsById = async (req, res) => {
+    const userId = req.userId;
+    const shortId = req.params.shortId;
+
+    if (!userId) {
+        return res.status(400).json({ error: "userId is required" });
+    }
+
+    if (!shortId || typeof shortId !== 'string') {
+        return res.status(400).json({ error: "Invalid short URL identifier" });
+    }
+
+    const entry = await URL.findOne({ shortUrl: shortId });
+    if (!entry) {
+        return res.status(404).json({ error: "Short URL not found1" });
+    }
+    
+    
+
+    try {
+   
+        const urls = await URL.find({ userId: userId ,shortUrl:shortId}).sort({ createdAt: -1 });
+        
+        if (!urls || urls.length === 0) {
+            return res.status(404).json({ message: "No URLs found for this user" });
+        }
+        
+        return res.json(urls);
+    }
+    catch(err) {
+
+        return res.status(500).json({ error: "Something went wrong while fetching URLs" });
+    }
+}
 //Delete URL by user
 const deleteUrlByUser = async (req, res) => {
     const userId = req.userId;
@@ -231,4 +266,4 @@ const deleteUrlByUser = async (req, res) => {
     }
 }
 
-module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser,deleteUrlByUser};
+module.exports = {GenerateNewUrl,redirectIdtoUrl,showAnalytics,getUrlsByUser,deleteUrlByUser,getUrlsById};
