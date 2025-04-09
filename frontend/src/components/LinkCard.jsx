@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Copy,Trash,Download } from "lucide-react";
 import { BackendUrl } from '@/utils/Urls';
 import CustomAlert from "./CustomAlert"; 
+import { downloadQr } from "@/utils/DownloadQr";
 
 
 const customTitle=(title)=>{
@@ -38,33 +39,33 @@ const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
     showToast("Link copied to clipboard!","success");
   };
  
-  const downloadQr = ()=>{
-    if (!url?.qr) {
-      showToast("QR Code not found!", "error");
-      return;
-    }
+  // const downloadQr = ()=>{
+  //   if (!url?.qr) {
+  //     showToast("QR Code not found!", "error");
+  //     return;
+  //   }
 
-    const imageUrl = url.qr;
-    const filename = url.title ? `${url.title}.png` : "qr-code.png";
+  //   const imageUrl = url.qr;
+  //   const filename = url.title ? `${url.title}.png` : "qr-code.png";
 
-    fetch(imageUrl)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
+  //   fetch(imageUrl)
+  //     .then((response) => response.blob())
+  //     .then((blob) => {
+  //       const blobUrl = URL.createObjectURL(blob);
+  //       const anchor = document.createElement("a");
 
-        anchor.href = blobUrl;
-        anchor.download = filename;
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
-        URL.revokeObjectURL(blobUrl);
+  //       anchor.href = blobUrl;
+  //       anchor.download = filename;
+  //       document.body.appendChild(anchor);
+  //       anchor.click();
+  //       document.body.removeChild(anchor);
+  //       URL.revokeObjectURL(blobUrl);
 
-        showToast("QR Code downloaded!", "success");
-      })
-      .catch(() => showToast("Failed to download QR Code.", "error"));
+  //       showToast("QR Code downloaded!", "success");
+  //     })
+  //     .catch(() => showToast("Failed to download QR Code.", "error"));
     
-  } 
+  // } 
     return(
         <div className="flex flex-col md:flex-row gap-5 shadow-lg rounded-md bg-gray-900 p-4 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-700">
         
@@ -94,7 +95,7 @@ const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
                     <Button
                     variant="secondary"
                     size="sm"
-                    onClick={downloadQr}
+                    onClick={()=>downloadQr(url,showToast)}
                      className="flex items-center gap-1 hover:bg-black">
                         <Download size={16}/> 
                     </Button>
