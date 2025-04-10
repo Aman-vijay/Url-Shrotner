@@ -1,16 +1,19 @@
 const {nanoid} = require("nanoid");
 const {URL,Analytics} = require("../models/url")
-
+const dotenv = require('dotenv');
+dotenv.config();
 const geoip = require("geoip-lite")
 
-
-async function getGeoData(ip) {
+const iptoken = process.env.IP_TOKEN
+function getGeoData(ip) {
     const geo = geoip.lookup(ip);
     return {
         city: geo?.city || null,
         country: geo?.country || null
     };
 }
+
+
 
 
 async function GenerateNewUrl(req, res) {
@@ -82,7 +85,7 @@ async function GenerateNewUrl(req, res) {
     }
   }
   
-async function redirectIdtoUrl(req, res) {
+  async function redirectIdtoUrl(req, res) {
     try {
         const shortId = req.params.shortId;
         if (!shortId || typeof shortId !== 'string') {
@@ -91,22 +94,35 @@ async function redirectIdtoUrl(req, res) {
 
         const entry = await URL.findOne({ shortUrl: shortId });
         if (!entry) {
-            return res.status(404).json({ error: "Short URL not found2" });
-        }
-        const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-        let { city, country } = getGeoData(ip);
-
-        //In case of frontend 
-        if (req.body.latitude && req.body.longitude) {
-            city = req.body.city || city;
-            country = req.body.country || country;
+            return res.status(404).json({ error: "Short URL not found" });
         }
 
+        // IP detection
+        const forwarded = req.headers["x-forwarded-for"];
+        let ip = forwarded ? forwarded.split(",")[0] : req.socket.remoteAddress;
+
+        // Use mock IP in development
+        const isDev = process.env.prod_status == "false";
+        if (isDev) {
+            ip = "207.97.227.239"; // Google DNS (USA)
+        }
+
+        // Get location data
+        const { city, country } = getGeoData(ip);
+
+        // Get device type
         const userAgent = req.headers["user-agent"] || "";
         const deviceType = userAgent.includes("Mobile") ? "Mobile" : "Desktop";
-       
 
-        // Update Analytics
+        // Override with frontend location if available
+        const latitude = req.body.latitude || null;
+        const longitude = req.body.longitude || null;
+        const finalCity = req.body.city || city;
+        const finalCountry = req.body.country || country;
+
+        console.log(`📍 IP: ${ip} | City: ${finalCity} | Country: ${finalCountry}`);
+
+        // Update analytics
         await Analytics.findOneAndUpdate(
             { urlId: entry._id },
             {
@@ -115,17 +131,16 @@ async function redirectIdtoUrl(req, res) {
                         Timestamp: Date.now(),
                         ip,
                         userAgent,
-                        city,
-                        country,
+                        city: finalCity,
+                        country: finalCountry,
                         deviceType,
-                        latitude: req.body.latitude || null,
-                        longitude: req.body.longitude || null
+                        latitude,
+                        longitude
                     }
                 }
             },
             { new: true, upsert: true }
         );
-
 
         return res.redirect(entry.redirectUrl);
     } catch (err) {
@@ -133,6 +148,7 @@ async function redirectIdtoUrl(req, res) {
         return res.status(500).json({ error: "Something went wrong while redirecting" });
     }
 }
+
 
 async function showAnalytics(req, res) {
     try {
