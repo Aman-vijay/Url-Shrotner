@@ -11,11 +11,10 @@ import { Copy,Trash,Download } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import LocationStats from '@/components/LocationStats';
 import DeviceStats from '@/components/DeviceStats';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -113,6 +112,7 @@ const Link = () => {
       }
       
       const res = await response.json();
+      console.log(res)
        return res;
   
    
@@ -244,15 +244,34 @@ const Link = () => {
                   <h2 className="text-lg font-semibold">Total Clicks</h2>
                   <p className="text-3xl font-bold">{analytics.totalClicks}</p>
                 </div>
-                <CardTitle className="text-white text-2xl font-semibold">
-               Location Stats
-               <LocationStats />
-              </CardTitle>
-              <CardTitle className="text-white text-2xl font-semibold">
-                Device Stats
-                {/* <DeviceStats stats={}/> */}
-              </CardTitle>
-               
+                {analytics.clicks && analytics.clicks.length > 0 ? (
+  <Tabs defaultValue="location" className="w-full mt-6">
+    <TabsList className="flex flex-wrap justify-start bg-white/10 mb-4">
+      <TabsTrigger value="location">Location Stats</TabsTrigger>
+      <TabsTrigger value="device">Device Stats</TabsTrigger>
+    </TabsList>
+
+    <TabsContent value="location">
+      <CardTitle className="text-white text-2xl font-semibold mb-4">
+        Location Stats
+      </CardTitle>
+      <LocationStats stats={analytics.clicks} />
+    </TabsContent>
+
+    <TabsContent value="device">
+      <CardTitle className="text-white text-2xl font-semibold mb-4">
+        Device Stats
+      </CardTitle>
+      <DeviceStats stats={analytics.clicks} />
+    </TabsContent>
+  </Tabs>
+) : (
+  <>
+    <p className="text-white">No location analytics available yet.</p>
+    <p className="text-white">No device analytics available.</p>
+  </>
+)}
+
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl hover:bg-white/15 transition">
                   <h2 className="text-lg font-semibold">Last Clicked</h2>
                   <p>
@@ -314,6 +333,8 @@ const Link = () => {
     </div>
   );
 };
+
+
 
 
 export default Link;
