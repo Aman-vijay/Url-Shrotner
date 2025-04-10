@@ -24,7 +24,7 @@ const customTitle=(title)=>{
   
 const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
 
-  const handleDelete = async (urlId) => {
+ const handleDelete = async (urlId) => {
     try {
       await deleteUrl({ backendUrl: BackendUrl, token: localStorage.getItem("token"), urlId });
       showToast("URL deleted successfully!", "success");
@@ -39,33 +39,7 @@ const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
     showToast("Link copied to clipboard!","success");
   };
  
-  // const downloadQr = ()=>{
-  //   if (!url?.qr) {
-  //     showToast("QR Code not found!", "error");
-  //     return;
-  //   }
 
-  //   const imageUrl = url.qr;
-  //   const filename = url.title ? `${url.title}.png` : "qr-code.png";
-
-  //   fetch(imageUrl)
-  //     .then((response) => response.blob())
-  //     .then((blob) => {
-  //       const blobUrl = URL.createObjectURL(blob);
-  //       const anchor = document.createElement("a");
-
-  //       anchor.href = blobUrl;
-  //       anchor.download = filename;
-  //       document.body.appendChild(anchor);
-  //       anchor.click();
-  //       document.body.removeChild(anchor);
-  //       URL.revokeObjectURL(blobUrl);
-
-  //       showToast("QR Code downloaded!", "success");
-  //     })
-  //     .catch(() => showToast("Failed to download QR Code.", "error"));
-    
-  // } 
     return(
         <div className="flex flex-col md:flex-row gap-5 shadow-lg rounded-md bg-gray-900 p-4 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-700">
         
@@ -103,7 +77,7 @@ const LinkCard = ({url,showToast,deleteUrl,fetchData})=>{
   message="Are you sure you want to delete this link? This action cannot be undone."
   confirmText="Yes, Delete"
   cancelText="Cancel"
-  onConfirm={() => handleDelete(url?._id)} // ✅ Fix: Pass function reference
+  onConfirm={() => handleDelete(url?._id)}
   onCancel={() => showToast("Cancelled deletion", "error")}
   triggerText={<Trash size={16} />} 
   variant="destructive" 

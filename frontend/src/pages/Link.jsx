@@ -3,11 +3,63 @@ import { useParams } from "react-router-dom";
 import { BackendUrl } from '@/utils/Urls';
 import useFetch from '@/hooks/useFetch';
 import { BarLoader } from 'react-spinners';
+import { LinkIcon } from 'lucide-react';
+import CustomAlert from "../components/CustomAlert"; 
+import { toast, Toaster } from "react-hot-toast"; 
+import { downloadQr } from '@/utils/DownloadQr';
+import { Copy,Trash,Download } from "lucide-react";
+import { Button } from '@/components/ui/button';
+
+
+
+
 const Link = () => {
   const token = localStorage.getItem("token");
   const { id } = useParams();
+  const showToast = (message, type = "success") => {
+    if (type === "success") {
+      toast.success(message, { position: "bottom-left" });
+    } else {
+      toast.error(message, { position: "bottom-left" });
+    }
+  };
+
   
 
+
+  const handleDelete = async (urlId) => {
+    try {
+      const res = await fetch(`${BackendUrl}/api/deleteUrl/${urlId}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to delete the URL');
+      }
+      
+      const data = await res.json();
+      showToast("URL deleted successfully", "success");
+      
+      
+      return data;
+    }
+    catch (error) {
+      console.error("Delete error:", error);
+      showToast("Failed to delete URL", "error");
+    }
+  }
+    
+  
+
+  
+  const copyToClipboard = (text) => {  
+    navigator.clipboard.writeText(text);  
+    showToast("Link copied to clipboard!","success");
+  };
   
   const fetchUrlById = async ()=>{
     try{
@@ -76,22 +128,56 @@ const Link = () => {
   if (error || urlError) {
     return <div className="text-center p-4 text-red-500">{error}</div>;
   }
+  
 
   return (
     <div className='mx-auto p-4'>
       <h1 className="text-2xl font-bold mb-4">Analytics for: {id}</h1>
-      <div className=" flex flex-row  gap-x-4 w-6/12 ">
-<div>
+      <div className=" flex flex-col  gap-8   sm:flex-row justify-between">
+         <Toaster position="top-left" reverseOrder={false} />
+<div className='p-4 items-start gap-8 sm:w-2/5'>
       {url &&(
         <div>
-          <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg hover:bg-white/15 transition">
+          <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg hover:bg-white/15 transition  ">
             {url.map((item)=>{
               return(
-               <div key={item?.id}>
-                <div>{item?.title}</div>
-                <div>{item?.shortUrl}</div>
-                <div>{item?.redirectUrl}</div>
-                <img src={item?.qr}/>
+               <div className='flex flex-col gap-4' key={item?.id}>
+                <div className='text-2xl font-extrabold hover:underline cursor-pointer'>{item?.title}</div>
+                <a className='text-3xl sm:text-xl text-blue-200 font-bold hover:underline cursor-pointer' href={`${BackendUrl}/${item?.shortUrl}`} target='_blank'> {BackendUrl}/{item?.shortUrl}</a>
+                <div className='flex items-center text-lg sm:text-sm gap-1 hover:underline cursor-pointer'><LinkIcon className='p-1'/>{item?.redirectUrl}</div>
+                <img src={item?.qr} className='w-40 h-40'/>
+                <div className='flex items-end font-extralight text-sm'>Created: {new Date(item?.createdAt).toLocaleDateString()}</div>
+
+                <div className="flex gap-2 mt-2 sm:mt-0 cursor-pointer">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(`${BackendUrl}/${item?.shortUrl}`)}
+                      className="flex items-center gap-1"
+                    >
+                      <Copy size={16} /> 
+                    </Button>
+                    
+
+                    <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={()=>downloadQr(item,showToast)}
+                     className="flex items-center gap-1 hover:bg-black">
+                        <Download size={16}/> 
+                    </Button>
+                    <CustomAlert
+  message="Are you sure you want to delete this link? This action cannot be undone."
+  confirmText="Yes, Delete"
+  cancelText="Cancel"
+  onConfirm={() => handleDelete(item?._id)}
+  onCancel={() => showToast("Cancelled deletion", "error")}
+  triggerText={<Trash size={16} />} 
+  variant="destructive" 
+/>
+
+      </div>
+                 
                </div>
               )
             })}
@@ -101,7 +187,7 @@ const Link = () => {
       </div>
      
      
-<div>
+<div className='p-4'>
       {analytics && (
         <div className="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg rounded-xl p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
