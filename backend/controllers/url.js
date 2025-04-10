@@ -175,13 +175,25 @@ async function showAnalytics(req, res) {
             lastClickedAt: analyticsData.clicks.length > 0 
                 ? new Date(analyticsData.clicks[analyticsData.clicks.length - 1].Timestamp) 
                 : null,
-            clicksPerDay: {}
+            clicksPerDay: {},
+            clicks:[]
         };
 
         // Aggregate clicks per day
         analyticsData.clicks.forEach(visit => {
             const date = new Date(visit.Timestamp).toISOString().split('T')[0];
             analytics.clicksPerDay[date] = (analytics.clicksPerDay[date] || 0) + 1;
+
+            analytics.clicks.push({
+                timestamp: new Date(visit.Timestamp),
+                ip: visit.ip || null,
+                city: visit.city || null,
+                country: visit.country || null,
+                deviceType: visit.deviceType || null,
+                latitude: visit.latitude || null,
+                longitude: visit.longitude || null,
+                userAgent: visit.userAgent || null,
+            });
         });
 
         return res.json(analytics);
