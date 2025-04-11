@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRightIcon, LinkIcon, CopyIcon, CheckIcon } from 'lucide-react';
 import {useNavigate} from "react-router-dom"
-import { useAuth } from "@/context/AuthContext";  
+import { useAuth } from "../Context/AuthContext";  
 
 
 const faqItems = [

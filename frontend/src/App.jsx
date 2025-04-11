@@ -1,11 +1,10 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext"; // Import AuthContext
+import { useAuth } from "./context/AuthContext";
 import AppLayout from "./layouts/AppLayout";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Link from "./pages/Link";
-// import Redirect from "./pages/Redirect";
 import Error from "./pages/Error";
 
 // Protected Route Component

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { BeatLoader } from 'react-spinners';
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { Button } from '@/components/ui/button';
 import {
   Card,

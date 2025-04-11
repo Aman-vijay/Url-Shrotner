@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +19,6 @@ import { toast, Toaster } from "react-hot-toast";
 
 const CreateLink = ({ onSuccess }) => {
   const token = localStorage.getItem("token");
-  const [searchParams, setSearchParams] = useSearchParams();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
