@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,lazy,Suspense } from 'react';
 import { useParams,useNavigate } from "react-router-dom";
 import { BackendUrl } from '@/utils/Urls';
 import useFetch from '@/hooks/useFetch';
@@ -9,8 +9,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { downloadQr } from '@/utils/DownloadQr';
 import { Copy,Trash,Download } from "lucide-react";
 import { Button } from '@/components/ui/button';
-import LocationStats from '@/components/LocationStats';
-import DeviceStats from '@/components/DeviceStats';
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Card,
@@ -21,7 +20,8 @@ import {
 
 
 
-
+const LocationStats = lazy(()=> import("../components/LocationStats"))
+const DeviceStats = lazy(()=> import("../components/DeviceStats"))
 const Link = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -247,10 +247,11 @@ const Link = () => {
                 {analytics.clicks && analytics.clicks.length > 0 ? (
   <Tabs defaultValue="location" className="w-full mt-6">
     <TabsList className="flex flex-wrap justify-start bg-white/10 mb-4">
+   
       <TabsTrigger value="location">Location Stats</TabsTrigger>
       <TabsTrigger value="device">Device Stats</TabsTrigger>
     </TabsList>
-
+    <Suspense fallback = {<div>Loading chart...</div>}>
     <TabsContent value="location">
       <CardTitle className="text-white text-2xl font-semibold mb-4">
         Location Stats
@@ -264,6 +265,7 @@ const Link = () => {
       </CardTitle>
       <DeviceStats stats={analytics.clicks} />
     </TabsContent>
+    </Suspense>
   </Tabs>
 ) : (
   <>
