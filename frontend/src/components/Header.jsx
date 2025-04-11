@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, LinkIcon } from "lucide-react";
 import logo from "../assets/url-logo.svg";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";  
+import { useAuth } from "../Context/AuthContext";  
 
 const Header = () => {
     const navigate = useNavigate();
