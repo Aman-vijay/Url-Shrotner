@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRightIcon, LinkIcon, CopyIcon, CheckIcon } from 'lucide-react';
 import {useNavigate} from "react-router-dom"
 import { useAuth } from "../Context/AuthContext";  
+import {Link} from "react-router-dom"
 
 
 const faqItems = [
@@ -197,10 +198,11 @@ const {user} = useAuth();
         <div className="py-16 text-center">
           <div className="max-w-3xl mx-auto bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 shadow-lg">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to shorten your URLs?</h2>
-            <p className="text-lg mb-6">Create an account for free and unlock additional features.</p>
+            <p className="text-lg mb-6">Create an account for free and create shorter url.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">Sign Up Free</Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white/10">Learn More</Button>
+            <Link to={`/auth`} className="flex flex-col flex-1">
+             <Button className="bg-white text-blue-600 hover:bg-gray-100">Sign Up Free</Button>
+             </Link>
             </div>
           </div>
         </div>
