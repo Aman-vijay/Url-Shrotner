@@ -104,7 +104,7 @@ const handleSignup = async (e) => {
 
 
 return (
-  <Card className="w-[400px] shadow-xl">
+  <Card className="w-[400px]shadow-xl">
     <CardHeader className="space-y-3">
       <div className="flex justify-center">
         <User className="h-12 w-12 text-primary" />

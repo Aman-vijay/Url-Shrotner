@@ -25,7 +25,7 @@ const Auth = () => {
 
         <Tabs
           defaultValue={isNewUser ? 'signup' : 'login'}
-          className="w-full  dark:bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-xl p-4 sm:p-6"
+          className="w-full   dark:bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-xl p-4 sm:p-6"
         >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger

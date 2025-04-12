@@ -99,7 +99,7 @@ export const Login = () => {
   };
 
   return (
-    <Card className="w-[400px] shadow-xl">
+    <Card className="w-[400px]shadow-xl">
       <CardHeader className="space-y-3">
         <div className="flex justify-center">
           <Lock className="h-12 w-12 text-primary" />
