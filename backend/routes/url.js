@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router()
 const {GenerateNewUrl,showAnalytics,getUrlsByUser,deleteUrlByUser,getUrlsById} = require("../controllers/url")
 const {verifyTokenMiddleware} = require("../utils/jwt")
+const { validate, createUrlSchema } = require("../utils/validation")
 
-router.post("/createNewUrl",verifyTokenMiddleware, GenerateNewUrl);
+router.post("/createNewUrl", verifyTokenMiddleware, validate(createUrlSchema), GenerateNewUrl);
 
 
 router.get("/analytics/:shortId", verifyTokenMiddleware, showAnalytics);
