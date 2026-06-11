@@ -1,10 +1,7 @@
-const {nanoid} = require("nanoid");
+const {nanoid} = require("nanoid"); // nanoid pinned to v3: v5 is ESM-only and throws ERR_REQUIRE_ESM under require()
 const {URL,Analytics} = require("../models/url")
-const dotenv = require('dotenv');
-dotenv.config();
 const geoip = require("geoip-lite")
 
-const iptoken = process.env.IP_TOKEN
 function getGeoData(ip) {
     const geo = geoip.lookup(ip);
     return {
@@ -61,7 +58,6 @@ async function GenerateNewUrl(req, res) {
         title: body.title?.trim() || "Default Title",
         redirectUrl,
         customUrl: trimmedCustomUrl || undefined,
-        qr: body.qr,
       });
   
       // Create initial analytics record
@@ -75,9 +71,6 @@ async function GenerateNewUrl(req, res) {
       if (err.code === 11000) {
         if (err.keyPattern?.customUrl) {
           return res.status(409).json({ error: "Custom URL already in use" });
-        }
-        if (err.keyPattern?.qr) {
-          return res.status(409).json({ error: "QR already in use" });
         }
       }
   
@@ -102,7 +95,7 @@ async function GenerateNewUrl(req, res) {
         let ip = forwarded ? forwarded.split(",")[0] : req.socket.remoteAddress;
 
         // Use mock IP in development
-        const isDev = process.env.prod_status == "false";
+        const isDev = process.env.PROD_STATUS == "false";
         if (isDev) {
             ip = "207.97.227.239"; // Google DNS (USA)
         }
@@ -114,13 +107,7 @@ async function GenerateNewUrl(req, res) {
         const userAgent = req.headers["user-agent"] || "";
         const deviceType = userAgent.includes("Mobile") ? "Mobile" : "Desktop";
 
-        // Override with frontend location if available
-        const latitude = req.body.latitude || null;
-        const longitude = req.body.longitude || null;
-        const finalCity = req.body.city || city;
-        const finalCountry = req.body.country || country;
-
-        console.log(`📍 IP: ${ip} | City: ${finalCity} | Country: ${finalCountry}`);
+        console.log(`📍 IP: ${ip} | City: ${city} | Country: ${country}`);
 
         // Update analytics
         await Analytics.findOneAndUpdate(
@@ -131,11 +118,9 @@ async function GenerateNewUrl(req, res) {
                         Timestamp: Date.now(),
                         ip,
                         userAgent,
-                        city: finalCity,
-                        country: finalCountry,
-                        deviceType,
-                        latitude,
-                        longitude
+                        city,
+                        country,
+                        deviceType
                     }
                 }
             },
@@ -239,28 +224,12 @@ const getUrlsById = async (req, res) => {
     if (!shortId || typeof shortId !== 'string') {
         return res.status(400).json({ error: "Invalid short URL identifier" });
     }
-
-    const entry = await URL.findOne({ shortUrl: shortId });
+    const entry = await URL.findOne({ userId: userId ,shortUrl:shortId});
     if (!entry) {
-        return res.status(404).json({ error: "Short URL not found1" });
+        return res.status(404).json({ message: "No URLs found for this user" });
     }
     
-    
-
-    try {
-   
-        const urls = await URL.find({ userId: userId ,shortUrl:shortId}).sort({ createdAt: -1 });
-        
-        if (!urls || urls.length === 0) {
-            return res.status(404).json({ message: "No URLs found for this user" });
-        }
-        
-        return res.json(urls);
-    }
-    catch(err) {
-
-        return res.status(500).json({ error: "Something went wrong while fetching URLs" });
-    }
+    return res.json([entry]);
 }
 //Delete URL by user
 const deleteUrlByUser = async (req, res) => {

@@ -18,10 +18,6 @@ const CreateUser = async (req, res) => {
         if (existingEmail) {
             return res.status(400).json({ message: "User already exists, redirect to login" });
         }
-        const passwordLength = password.length;
-        if (passwordLength < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters" });
-        }
         const existingUsername = await  User.findOne({ username });
         if (existingUsername) {
             return res.status(400).json({ message: "Username already taken" });

@@ -62,17 +62,11 @@ const UrlSchema = new mongoose.Schema({
       type: String,
       sparse: true,
       default: undefined
-    },
-    qr: {
-      type: String,
-      sparse: true,
-      default: undefined
     }
   }, { timestamps: true });
   
   // ✅ Unique per user
   UrlSchema.index({ userId: 1, customUrl: 1 }, { unique: true, sparse: true });
-  UrlSchema.index({ userId: 1, qr: 1 }, { unique: true, sparse: true });
   
 
   
