@@ -2,12 +2,12 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-4 px-6 shadow-lg">
-            <div className="container mx-auto flex items-center justify-between">
-                <p className="text-white text-center font-medium">
-                    Made with <span className="animate-pulse inline-block">💖</span> by Aman Vijay
+        <footer className="w-full bg-background border-t border-border py-6 px-6">
+            <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+                <p className="text-muted-foreground text-center font-medium">
+                    Made with care by Aman Vijay
                 </p>
-                <p className="text-white">&copy; {new Date().getFullYear()} URL Shortener. All rights reserved.</p>
+                <p className="text-muted-foreground">&copy; {new Date().getFullYear()} URL Shortener. All rights reserved.</p>
             </div>
         </footer>
     );

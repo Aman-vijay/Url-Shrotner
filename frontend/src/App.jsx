@@ -27,7 +27,6 @@ const router = createBrowserRouter(
       <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
       <Route path="/auth" element={<AuthRedirect element={<Auth />} />} />
       <Route path="/link/:id" element={<Link />} />
-      {/* <Route path="/:id" element={<Redirect />} /> */}
     </Route>
   )
 );
