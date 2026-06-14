@@ -13,8 +13,10 @@ const useFetch = (cb,options={}) => {
             const response = await cb(options,...args)
             setData(response)
             setError(null)
+            return response
         } catch (err) {
             setError(err)
+            throw err
         } finally {
             setLoading(false)
         }
