@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { loginSchema, authResponseSchema, parseOrThrow, getFormErrors } from '@/lib/schemas';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { BeatLoader } from 'react-spinners';
 import { useAuth } from "../Context/AuthContext";
@@ -15,16 +15,13 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import useFetch from '@/hooks/useFetch';
-import {useSearchParams} from "react-router-dom";
 import { BackendUrl } from '@/utils/Urls';
 export const Login = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -51,55 +48,37 @@ export const Login = () => {
         const response = await fetch(`${BackendUrl}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...formData, rememberMe }),
+          body: JSON.stringify({ ...formData }),
         });
       
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Login failed');
-        login(data.user);      
-        localStorage.setItem('token', data.token);
-        if (rememberMe) localStorage.setItem('rememberedEmail', formData.email);
-        else localStorage.removeItem('rememberedEmail');
+        const parsed = parseOrThrow(authResponseSchema, data, "Login response");
+        login(parsed.user);      
+        localStorage.setItem('token', parsed.token);
       
-        return data; 
+        return parsed; 
       };
       
 
-  const { error,data, loading, fetchData } = useFetch(handleSubmit, {});
+  const { error, loading, fetchData } = useFetch(handleSubmit, {});
 
-    useEffect(() => {
-        if(error=== null && data){
-          navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
-
-        }
-    }, [error, data, navigate])
-   
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrors({});
-    try {
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .email('Please enter a valid email address')
-          .required('Email is required'),
-        password: Yup.string()
-          .min(6, 'Password must be at least 6 characters')
-          .required('Password is required'),
-      });
-
-      await schema.validate(formData, { abortEarly: false });
-      fetchData();
-    } catch (e) {
-      const newErrors = {};
-      e.inner?.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+    const result = loginSchema.safeParse(formData);
+    if (!result.success) {
+      setErrors(getFormErrors(result.error) || {});
+      return;
+    }
+    const res = await fetchData();
+    if (res) {
+      navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
     }
   };
 
   return (
-    <Card className="w-[400px]shadow-xl">
+    <Card className="w-full">
       <CardHeader className="space-y-3">
         <div className="flex justify-center">
           <Lock className="h-12 w-12 text-primary" />
@@ -132,7 +111,7 @@ export const Login = () => {
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleInputChange}
-                  error={errors.email}
+                  aria-invalid={!!errors.email}
                 />
               </div>
               {errors.email && (
@@ -152,7 +131,7 @@ export const Login = () => {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  error={errors.password}
+                  aria-invalid={!!errors.password}
                 />
                 <button
                   type="button"
@@ -169,19 +148,6 @@ export const Login = () => {
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked)}
-                />
-                <Label htmlFor="remember" className="text-sm font-normal">
-                  Remember me
-                </Label>
-              </div>
             </div>
           </div>
         </form>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { useState,useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import * as Yup from 'yup'
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { signupSchema, authResponseSchema, parseOrThrow, getFormErrors } from '@/lib/schemas'
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { BeatLoader } from 'react-spinners'
 import { useAuth } from '../Context/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -11,8 +11,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import useFetch from '@/hooks/useFetch'
-import { useSearchParams } from 'react-router-dom'
-import { User } from "lucide-react";
 import { BackendUrl } from '@/utils/Urls'
 
 
@@ -53,58 +51,39 @@ const Signup = () => {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || 'Signup failed');
-    login(data.user);      
-    localStorage.setItem('token', data.token);
+    const parsed = parseOrThrow(authResponseSchema, data, "Signup response");
+    login(parsed.user);      
+    localStorage.setItem('token', parsed.token);
 
-    return data; 
+    return parsed; 
   };
   
   const { data, loading, error, fetchData } = useFetch(handleSubmit, {});
 
-  
+
 
 
   const [searchParams] = useSearchParams()
   const redirectUrl = searchParams.get('createNew') ;
 
-    useEffect(() => {
-          if(error=== null && data){
-            navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
-
-          }
-      }, [error, data, navigate])
-const handleSignup = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setErrors({});
-    try {
-      const schema = Yup.object().shape({
-        username: Yup.string()
-          .min(3, 'Username must be at least 3 characters')
-          .required('Username is required'),
-        email: Yup.string()
-          .email('Invalid email format')
-          .required('Email is required'),
-        password: Yup.string()
-          .min(6, 'Password must be at least 6 characters')
-          .required('Password is required'),
-      
-      });
-
-      await schema.validate(formData, { abortEarly: false });
-      fetchData();
-    } catch (e) {
-      const newErrors = {};
-      e.inner?.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+    const result = signupSchema.safeParse(formData);
+    if (!result.success) {
+      setErrors(getFormErrors(result.error) || {});
+      return;
+    }
+    const res = await fetchData();
+    if (res) {
+      navigate(`/dashboard${redirectUrl ? `?createNew=${redirectUrl}` : ''}`);
     }
   };
 
 
 
 return (
-  <Card className="w-[400px]shadow-xl">
+  <Card className="w-full">
     <CardHeader className="space-y-3">
       <div className="flex justify-center">
         <User className="h-12 w-12 text-primary" />
@@ -118,7 +97,7 @@ return (
     <CardContent>
       <form onSubmit={handleSignup} className="space-y-6">
         {data && (
-          <Alert variant="success" className="mb-4">
+          <Alert className="mb-4">
             <AlertDescription>Signup successful! Redirecting...</AlertDescription>
           </Alert>
         )}
@@ -143,6 +122,7 @@ return (
                 placeholder="Enter your username"
                 value={formData.username}
                 onChange={handleInputChange}
+                aria-invalid={!!errors.username}
               />
             </div>
             {errors.username && (
@@ -165,6 +145,7 @@ return (
                 placeholder="name@example.com"
                 value={formData.email}
                 onChange={handleInputChange}
+                aria-invalid={!!errors.email}
               />
             </div>
             {errors.email && (
@@ -185,6 +166,7 @@ return (
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
+                aria-invalid={!!errors.password}
               />
               <button
                 type="button"

@@ -10,10 +10,10 @@ const Auth = () => {
   const isNewUser = searchParams.get('createNew') === 'true';
 
   return (
-    <div className="min-h-screen   dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 md:p-8">
       <div className="max-w-md mx-auto space-y-2">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-balance">
             Welcome
           </h1>
           {isNewUser && (
@@ -25,21 +25,21 @@ const Auth = () => {
 
         <Tabs
           defaultValue={isNewUser ? 'signup' : 'login'}
-          className="w-full   dark:bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-xl p-4 sm:p-6"
+          className="w-full bg-card border border-border rounded-xl p-4 sm:p-6"
         >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger
               value="login"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              <UserCircle2 className="w-4 h-4 mr-2" />
+              <UserCircle2 className="w-4 h-4 mr-2" aria-hidden="true" />
               Login
             </TabsTrigger>
             <TabsTrigger
               value="signup"
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
-              <Users className="w-4 h-4 mr-2" />
+              <Users className="w-4 h-4 mr-2" aria-hidden="true" />
               Sign Up
             </TabsTrigger>
           </TabsList>
