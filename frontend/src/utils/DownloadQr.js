@@ -1,27 +1,18 @@
-export const downloadQr = (url,showToast)=>{
-    if (!url?.qr) {
-      showToast("QR Code not found!", "error");
+export const downloadQr = (canvas, title, showToast) => {
+    if (!canvas) {
+      showToast("QR Code not available yet!", "error");
       return;
     }
 
-    const imageUrl = url.qr;
-    const filename = url.title ? `${url.title}.png` : "qr-code.png";
+    const dataUrl = canvas.toDataURL("image/png");
+    const filename = title ? `${title}.png` : "qr-code.png";
 
-    fetch(imageUrl)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
+    const anchor = document.createElement("a");
+    anchor.href = dataUrl;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
 
-        anchor.href = blobUrl;
-        anchor.download = filename;
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
-        URL.revokeObjectURL(blobUrl);
-
-        showToast("QR Code downloaded!", "success");
-      })
-      .catch(() => showToast("Failed to download QR Code.", "error"));
-    
-  } 
+    showToast("QR Code downloaded!", "success");
+  }
