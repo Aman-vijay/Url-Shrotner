@@ -10,9 +10,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
 import ErrorMessage from "./ErrorMessage";
-import { useState, useRef, useEffect } from "react";
-import * as yup from "yup";
-import { QRCodeCanvas } from "qrcode.react";
+import { useState } from "react";
+import { createLinkSchema, getFormErrors } from "@/lib/schemas";
 import { BackendUrl, FrontendUrl } from "@/utils/Urls";
 import { BeatLoader } from "react-spinners";
 import { toast, Toaster } from "react-hot-toast";
@@ -22,28 +21,13 @@ const CreateLink = ({ onSuccess }) => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const ref = useRef();
+  const [open, setOpen] = useState(() => !!localStorage.getItem("redirectUrl"));
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     title: "",
-    redirectUrl: "",
+    redirectUrl: localStorage.getItem("redirectUrl") || "",
     customUrl: "",
-  });
-
-  useEffect(() => {
-    const storedRedirect = localStorage.getItem("redirectUrl");
-    if (storedRedirect) {
-      setFormData((prev) => ({ ...prev, redirectUrl: storedRedirect }));
-      setOpen(true);
-    }
-  }, []);
-
-  const schema = yup.object().shape({
-    title: yup.string().required("Title is required"),
-    redirectUrl: yup.string().url("Must be a valid URL").required("Long URL is required"),
-    customUrl: yup.string(),
-  });
+  }));
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -61,14 +45,15 @@ const CreateLink = ({ onSuccess }) => {
 
   const submitUrl = async () => {
     try {
-      await schema.validate(formData, { abortEarly: false });
+      const result = createLinkSchema.safeParse(formData);
+      if (!result.success) {
+        setError(getFormErrors(result.error) || {});
+        return;
+      }
       setError({});
       setLoading(true);
-  
-      const canvas = ref.current;
-      const qrDataUrl = canvas?.toDataURL?.("image/png") || null;
-  
-      const payload = { ...formData, qr: qrDataUrl };
+
+      const payload = { ...formData };
   
       const res = await fetch(`${BackendUrl}/api/createNewUrl`, {
         method: "POST",
@@ -108,15 +93,7 @@ const CreateLink = ({ onSuccess }) => {
       }, 1500);
   
     } catch (err) {
-      if (err instanceof yup.ValidationError) {
-        const validationErrors = {};
-        err.inner.forEach((error) => {
-          validationErrors[error.path] = error.message;
-        });
-        setError(validationErrors);
-      } else {
-        toast.error(err.message || "Something went wrong", { position: "bottom-left" });
-      }
+      toast.error(err.message || "Something went wrong", { position: "bottom-left" });
     } finally {
       setLoading(false);
     }
@@ -137,16 +114,14 @@ const CreateLink = ({ onSuccess }) => {
         }
       }}
     >
-      <Toaster position="top-left" reverseOrder={false} />
+      <Toaster position="bottom-left" reverseOrder={false} />
       <DialogTrigger asChild>
-        <Button variant="destructive">Create New Link</Button>
+        <Button>Create New Link</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-bold text-2xl">Create New URL</DialogTitle>
         </DialogHeader>
-
-        {formData.redirectUrl && <QRCodeCanvas value={formData.redirectUrl} size={250} ref={ref} />}
 
         <Input
           id="title"
@@ -180,8 +155,7 @@ const CreateLink = ({ onSuccess }) => {
         <DialogFooter className="sm:justify-start">
           <Button
             onClick={submitUrl}
-            variant="destructive"
-            className="hover:cursor-pointer hover:bg-red-500"
+            className="hover:cursor-pointer"
             disabled={loading}
           >
             {loading ? <BeatLoader size={8} color="#ffffff" /> : "Create"}

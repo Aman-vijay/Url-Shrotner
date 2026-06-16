@@ -2,13 +2,13 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
 import { useState } from "react";
 import { Button } from "./ui/button";
 
-const CustomAlert = ({ message, confirmText = "Confirm", cancelText = "Cancel", onConfirm, onCancel, triggerText, variant = "destructive" }) => {
+const CustomAlert = ({ message, confirmText = "Confirm", cancelText = "Cancel", onConfirm, onCancel, triggerText, triggerLabel = "Open confirmation", triggerSize, variant = "destructive" }) => {
   const [open, setOpen] = useState(false);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={variant} onClick={() => setOpen(true)}>
+        <Button variant={variant} size={triggerSize} onClick={() => setOpen(true)} aria-label={triggerLabel}>
           {triggerText}
         </Button>
       </AlertDialogTrigger>
